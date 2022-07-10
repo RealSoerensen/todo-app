@@ -38,50 +38,79 @@ class Todo extends Component {
     );
   }
 
+  componentDidMount() {
+    // Get todos from localStorage
+    const todos = localStorage.getItem("todos");
+    // If todos is not empty
+    if (todos) {
+      // Parse todos from localStorage
+      this.setState({ todos: JSON.parse(todos) });
+    }
+  }
+
+  componentDidUpdate() {
+    // Set todos to localStorage
+    localStorage.setItem("todos", JSON.stringify(this.state.todos));
+  }
+
   assignId() {
+    // Get todos from state
     const todos = this.state.todos;
+    // If todos is empty
     if (todos.length === 0) {
       return 1;
     }
+    // Get the last todo in the array
     return todos[todos.length - 1].id + 1;
   }
 
   addTodo() {
+    // Get title and description from input
     const title = document.getElementById("todo-title").value;
     const desc = document.getElementById("todo-description").value;
+    // If title or description is empty return
     if (title === "" || desc === "") return;
 
     const todos = this.state.todos;
 
+    // Create new todo
     const newTodo = {
       id: this.assignId(),
       title: title,
       description: desc,
       completed: false,
     };
+    // Add new todo to todos
     todos.push(newTodo);
     this.setState({ todos });
+
+    // Clear inputs
     document.getElementById("todo-title").value = "";
     document.getElementById("todo-description").value = "";
   }
 
   completeTodo(id) {
     const todos = this.state.todos;
+    // Find todo with id
     const todo = todos.find((todo) => todo.id === id);
+    // Toggle completed
     todo.completed = !todo.completed;
     this.setState({ todos });
   }
 
   deleteTodo(id) {
     const todos = this.state.todos;
+    // Filter todos to remove todo with id
     const newTodos = todos.filter((todo) => todo.id !== id);
     this.setState({ todos: newTodos });
   }
 
   showTodos() {
     const todos = this.state.todos;
+    // If todos is empty return
     if (todos.length === 0) return <p>No todos!</p>;
 
+    // Map todos to show all todos
     return todos.map((todo) => (
       <div key={todo.id}>
         <span>
